@@ -13,7 +13,7 @@ function requireAuth(req, res, next) {
     }
 
     try {
-        const payload = jwt.verify(token, env.jwt.secret);
+        const payload = jwt.verify(token, env.jwt.secret, { algorithms: ["HS256"] });
         const userId = Number(payload.sub);
 
         if (!Number.isInteger(userId) || userId < 1) {

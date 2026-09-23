@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 const requiredVariables = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER", "DB_PASSWORD", "JWT_SECRET"];
 
 for (const variable of requiredVariables) {
-    if (process.env[variable] === undefined) {
+    if (typeof process.env[variable] !== "string" || process.env[variable].trim() === "") {
         throw new Error(`Missing required environment variable: ${variable}`);
     }
 }
@@ -33,6 +33,10 @@ module.exports = {
         secret: process.env.JWT_SECRET,
         expiresIn: process.env.JWT_EXPIRES_IN || "1d"
     },
+    corsOrigins: (process.env.CORS_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean),
     database: {
         host: process.env.DB_HOST,
         port: databasePort,

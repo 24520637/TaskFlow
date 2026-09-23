@@ -11,7 +11,13 @@ function validateCredentials(body, includeName) {
         throw error;
     }
 
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+    if (includeName && name.length > 120) {
+        const error = new Error("Name must be 120 characters or fewer");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    if (!email || email.length > 255 || !/^\S+@\S+\.\S+$/.test(email)) {
         const error = new Error("A valid email is required");
         error.statusCode = 400;
         throw error;
@@ -19,6 +25,12 @@ function validateCredentials(body, includeName) {
 
     if (password.length < 8) {
         const error = new Error("Password must be at least 8 characters long");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    if (password.length > 72) {
+        const error = new Error("Password must be 72 characters or fewer");
         error.statusCode = 400;
         throw error;
     }

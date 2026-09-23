@@ -10,7 +10,7 @@ function createToken(user) {
     return jwt.sign(
         { sub: String(user.id) },
         env.jwt.secret,
-        { expiresIn: env.jwt.expiresIn }
+        { algorithm: "HS256", expiresIn: env.jwt.expiresIn }
     );
 }
 
