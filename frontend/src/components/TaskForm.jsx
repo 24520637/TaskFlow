@@ -6,6 +6,7 @@ function toInputValue(value) {
 }
 
 export function TaskForm({ task, categories, onSubmit, onCancel, isSaving }) {
+  const isEditing = Boolean(task?.id);
   const [form, setForm] = useState({
     title: task?.title || "",
     description: task?.description || "",
@@ -31,7 +32,7 @@ export function TaskForm({ task, categories, onSubmit, onCancel, isSaving }) {
       <div className="task-form__grid"><label className="task-field"><span>Start</span><input type="datetime-local" value={form.start_datetime} onChange={(event) => update("start_datetime", event.target.value)} /></label><label className="task-field"><span>End</span><input type="datetime-local" value={form.end_datetime} onChange={(event) => update("end_datetime", event.target.value)} /></label></div>
       <div className="task-form__grid"><label className="task-field"><span>Deadline</span><input type="datetime-local" value={form.deadline} onChange={(event) => update("deadline", event.target.value)} /></label><CategorySelector categories={categories} value={form.category_id} onChange={(value) => update("category_id", value)} /></div>
       <div className="task-form__grid"><label className="task-field"><span>Priority</span><select value={form.priority} onChange={(event) => update("priority", event.target.value)}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></label><label className="task-field"><span>Status</span><select value={form.status} onChange={(event) => update("status", event.target.value)}><option value="pending">To do</option><option value="in_progress">In progress</option><option value="completed">Completed</option></select></label></div>
-      <div className="task-form__actions"><button type="button" className="button button--quiet" onClick={onCancel}>Cancel</button><button type="submit" className="button button--primary" disabled={isSaving}>{isSaving ? "Saving..." : task ? "Save changes" : "Add task"}<span aria-hidden="true">↗</span></button></div>
+      <div className="task-form__actions"><button type="button" className="button button--quiet" onClick={onCancel}>Cancel</button><button type="submit" className="button button--primary" disabled={isSaving}>{isSaving ? "Saving..." : isEditing ? "Save changes" : "Add task"}<span aria-hidden="true">↗</span></button></div>
     </form>
   );
 }

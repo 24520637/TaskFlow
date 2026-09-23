@@ -66,10 +66,11 @@ export function DashboardPage() {
   async function saveTask(payload) {
     setIsSaving(true); setError(""); setFeedback("");
     try {
-      const result = modalTask?.id ? await taskApi.update(token, modalTask.id, payload) : await taskApi.create(token, payload);
-      setTasks((current) => modalTask ? current.map((task) => task.id === result.task.id ? result.task : task) : [result.task, ...current]);
+      const isEditing = Boolean(modalTask?.id);
+      const result = isEditing ? await taskApi.update(token, modalTask.id, payload) : await taskApi.create(token, payload);
+      setTasks((current) => isEditing ? current.map((task) => task.id === result.task.id ? result.task : task) : [result.task, ...current]);
       setModalTask(undefined);
-      setFeedback(modalTask?.id ? "Task updated" : "Task added to your workspace");
+      setFeedback(isEditing ? "Task updated" : "Task added to your workspace");
     } catch (saveError) { setError(saveError.message); } finally { setIsSaving(false); }
   }
 
