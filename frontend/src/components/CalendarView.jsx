@@ -15,6 +15,13 @@ import {
 const hours = Array.from({ length: 17 }, (_, index) => index + 6);
 const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+function activateWithKeyboard(event, callback) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    callback();
+  }
+}
+
 function TaskChip({ task, onSelectTask, compact = false }) {
   return (
     <button className={`calendar-task${compact ? " calendar-task--compact" : ""} calendar-task--${task.priority}`} onClick={(event) => { event.stopPropagation(); onSelectTask(task); }}>
@@ -46,7 +53,7 @@ function WeekCalendar({ date, tasks, onSelectTask, onCreateAt }) {
   return (
     <div className="week-calendar">
       <div className="week-header"><div className="week-header__spacer" />{weekdays.map((weekday, index) => { const day = addDays(weekStart, index); return <div className={`week-day-header${formatDateKey(day) === formatDateKey(new Date()) ? " is-today" : ""}`} key={weekday}><span>{weekday}</span><strong>{day.getDate()}</strong></div>; })}</div>
-      <div className="week-body">{hours.map((hour) => <div className="week-row" key={hour}><span className="time-label">{new Intl.DateTimeFormat("en", { hour: "numeric" }).format(new Date(2000, 0, 1, hour))}</span>{weekdays.map((_, index) => { const day = addDays(weekStart, index); const dayTasks = tasksForDate(tasks, day).filter((task) => new Date(task.start_datetime).getHours() === hour); return <div className="week-slot" role="button" tabIndex="0" aria-label={`Create task on ${formatDateKey(day)} at ${hour}:00`} key={formatDateKey(day)} onClick={() => onCreateAt(new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour))}>{dayTasks.map((task) => <TaskChip key={task.id} task={task} onSelectTask={onSelectTask} compact />)}</div>; })}</div>)}</div>
+      <div className="week-body">{hours.map((hour) => <div className="week-row" key={hour}><span className="time-label">{new Intl.DateTimeFormat("en", { hour: "numeric" }).format(new Date(2000, 0, 1, hour))}</span>{weekdays.map((_, index) => { const day = addDays(weekStart, index); const dayTasks = tasksForDate(tasks, day).filter((task) => new Date(task.start_datetime).getHours() === hour); const createAt = () => onCreateAt(new Date(day.getFullYear(), day.getMonth(), day.getDate(), hour)); return <div className="week-slot" role="button" tabIndex="0" aria-label={`Create task on ${formatDateKey(day)} at ${hour}:00`} key={formatDateKey(day)} onClick={createAt} onKeyDown={(event) => activateWithKeyboard(event, createAt)}>{dayTasks.map((task) => <TaskChip key={task.id} task={task} onSelectTask={onSelectTask} compact />)}</div>; })}</div>)}</div>
     </div>
   );
 }
@@ -56,7 +63,7 @@ function MonthCalendar({ date, tasks, onSelectTask, onCreateAt }) {
   const gridStart = startOfWeek(monthStart);
   const days = Array.from({ length: 42 }, (_, index) => addDays(gridStart, index));
   return (
-    <div className="month-calendar"><div className="month-weekdays">{weekdays.map((weekday) => <span key={weekday}>{weekday}</span>)}</div><div className="month-grid">{days.map((day) => { const dayTasks = tasksForDate(tasks, day); const isCurrentMonth = day.getMonth() === date.getMonth(); const isToday = formatDateKey(day) === formatDateKey(new Date()); return <div className={`month-cell${isCurrentMonth ? "" : " month-cell--muted"}${isToday ? " is-today" : ""}`} role="button" tabIndex="0" key={formatDateKey(day)} onClick={() => onCreateAt(new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9))}><span className="month-cell__date">{day.getDate()}</span>{dayTasks.slice(0, 3).map((task) => <TaskChip key={task.id} task={task} onSelectTask={onSelectTask} compact />)}{dayTasks.length > 3 && <small>+{dayTasks.length - 3} more</small>}</div>; })}</div></div>
+    <div className="month-calendar"><div className="month-weekdays">{weekdays.map((weekday) => <span key={weekday}>{weekday}</span>)}</div><div className="month-grid">{days.map((day) => { const dayTasks = tasksForDate(tasks, day); const isCurrentMonth = day.getMonth() === date.getMonth(); const isToday = formatDateKey(day) === formatDateKey(new Date()); const createAt = () => onCreateAt(new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9)); return <div className={`month-cell${isCurrentMonth ? "" : " month-cell--muted"}${isToday ? " is-today" : ""}`} role="button" tabIndex="0" key={formatDateKey(day)} onClick={createAt} onKeyDown={(event) => activateWithKeyboard(event, createAt)}><span className="month-cell__date">{day.getDate()}</span>{dayTasks.slice(0, 3).map((task) => <TaskChip key={task.id} task={task} onSelectTask={onSelectTask} compact />)}{dayTasks.length > 3 && <small>+{dayTasks.length - 3} more</small>}</div>; })}</div></div>
   );
 }
 
@@ -76,7 +83,7 @@ export function CalendarView({ date, view, tasks, onViewChange, onDateChange, on
   const title = view === "month" ? formatMonthYear(date) : view === "week" ? formatRange(startOfWeek(date), addDays(startOfWeek(date), 6)) : new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(date);
   return (
     <section className="calendar-shell">
-      <div className="calendar-toolbar"><div className="calendar-nav"><button onClick={() => navigate(-1)} aria-label="Previous period">←</button><button onClick={() => navigate(1)} aria-label="Next period">→</button><button className="today-button" onClick={onToday}>Today</button><h2>{title}</h2></div><div className="view-switcher" role="tablist" aria-label="Calendar view">{["day", "week", "month"].map((option) => <button className={view === option ? "is-active" : ""} key={option} onClick={() => onViewChange(option)}>{option}</button>)}</div></div>
+      <div className="calendar-toolbar"><div className="calendar-nav"><button onClick={() => navigate(-1)} aria-label="Previous period">←</button><button onClick={() => navigate(1)} aria-label="Next period">→</button><button className="today-button" onClick={onToday}>Today</button><h2>{title}</h2></div><div className="view-switcher" role="tablist" aria-label="Calendar view">{["day", "week", "month"].map((option) => <button role="tab" aria-selected={view === option} className={view === option ? "is-active" : ""} key={option} onClick={() => onViewChange(option)}>{option}</button>)}</div></div>
       <div className="calendar-desktop-view">{view === "day" && <DayCalendar date={date} tasks={tasks} onSelectTask={onSelectTask} onCreateAt={onCreateAt} />}{view === "week" && <WeekCalendar date={date} tasks={tasks} onSelectTask={onSelectTask} onCreateAt={onCreateAt} />}{view === "month" && <MonthCalendar date={date} tasks={tasks} onSelectTask={onSelectTask} onCreateAt={onCreateAt} />}</div>
       <div className="calendar-mobile-view"><AgendaCalendar date={view === "month" ? startOfMonth(date) : date} tasks={tasks} onSelectTask={onSelectTask} onCreateAt={onCreateAt} /></div>
     </section>

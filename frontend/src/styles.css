@@ -17,8 +17,10 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; min-height: 100vh; }
-button, input { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(237, 139, 88, .42); outline-offset: 3px; }
+button:disabled { cursor: not-allowed; }
 a { color: inherit; }
 
 .logo-mark { align-items: center; display: inline-flex; gap: 10px; text-decoration: none; }
@@ -57,6 +59,9 @@ a { color: inherit; }
 .button--primary { background: var(--ink); color: var(--white); }
 .button span { color: var(--lime); font-size: 18px; }
 .form-error { background: #f9e4db; border-left: 3px solid var(--orange); color: #8d472a; font-size: 12px; line-height: 1.5; padding: 12px 14px; }
+.form-success { align-items: center; background: #e5efed; border-left: 3px solid var(--green); color: var(--green); display: flex; font-size: 12px; justify-content: space-between; line-height: 1.5; padding: 11px 14px; }
+.form-success button { background: transparent; border: 0; color: var(--green); font-size: 18px; line-height: 1; padding: 0 0 0 12px; }
+.task-page-feedback { margin-bottom: 14px; }
 .auth-footer { color: var(--muted); font-size: 12px; margin: 36px 0 0; text-align: center; }
 .auth-footer a { color: var(--green); font-weight: 800; text-decoration: none; }
 .auth-footer a:hover { text-decoration: underline; }
@@ -183,11 +188,13 @@ a { color: inherit; }
 .task-field > span { color: var(--muted); font-family: "DM Mono", monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; }
 .task-field small { color: #a8afa9; font-size: 9px; letter-spacing: 0; text-transform: none; }
 .task-field input, .task-field textarea { background: var(--white); border: 1px solid var(--line); border-radius: 0; color: var(--ink); font-size: 13px; outline: 0; padding: 11px 12px; resize: vertical; width: 100%; }
+.task-field textarea { line-height: 1.5; }
 .task-field input:focus, .task-field textarea:focus, .task-field select:focus { border-color: var(--green); }
 .task-form__grid { display: grid; gap: 15px; grid-template-columns: 1fr 1fr; }
 .task-form__actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
 .task-form__actions .button { justify-content: center; margin: 0; max-width: 165px; }
 .button--quiet { background: transparent; color: var(--muted); }
+.button--danger { background: #a94f32; color: var(--white); }
 .workspace-heading__tools { align-items: flex-end; display: flex; flex-direction: column; gap: 13px; }
 .workspace-switcher, .view-switcher { display: flex; gap: 3px; }
 .workspace-switcher button, .view-switcher button { background: transparent; border: 1px solid transparent; color: var(--muted); font-family: "DM Mono", monospace; font-size: 10px; padding: 7px 10px; text-transform: uppercase; }
@@ -248,6 +255,11 @@ a { color: inherit; }
 .agenda-day__header { align-items: center; background: transparent; border: 0; color: var(--ink); display: flex; font-family: "DM Mono", monospace; font-size: 10px; justify-content: space-between; padding: 3px 2px 9px; text-align: left; text-transform: uppercase; width: 100%; }
 .agenda-day__header b { color: var(--orange); font-size: 18px; font-weight: 400; }
 .agenda-empty { background: transparent; border: 0; color: var(--muted); font-size: 11px; padding: 9px 0 3px; text-align: left; }
+.confirm-dialog { background: var(--paper); max-width: 430px; padding: 30px; width: 100%; }
+.confirm-dialog h2 { font-size: 25px; letter-spacing: -1px; margin: 10px 0 8px; }
+.confirm-dialog > p:not(.eyebrow) { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
+.confirm-dialog__actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 26px; }
+.confirm-dialog__actions .button { justify-content: center; margin: 0; max-width: 145px; }
 
 @media (max-width: 800px) {
   .auth-page { grid-template-columns: 1fr; }
@@ -291,6 +303,9 @@ a { color: inherit; }
   .task-card__actions button { font-size: 10px; }
   .task-form__grid { grid-template-columns: 1fr; }
   .task-form__actions .button { max-width: none; }
+  .confirm-dialog { padding: 25px; }
+  .confirm-dialog__actions { flex-direction: column-reverse; }
+  .confirm-dialog__actions .button { max-width: none; }
   .workspace-heading__tools { align-items: flex-start; width: 100%; }
   .workspace-heading__note { display: none; }
   .calendar-toolbar { align-items: flex-start; flex-direction: column; gap: 13px; }
