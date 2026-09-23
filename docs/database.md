@@ -15,9 +15,14 @@ Fields:
 - id
 - name
 - email
-- password
+- password_hash
 - created_at
 - updated_at
+
+`password_hash` stores a bcrypt hash only. Plaintext passwords must never be stored.
+
+The initial users table is defined in `database/schema.sql`. Categories and tasks will
+be added when their APIs are implemented.
 
 ### categories
 
