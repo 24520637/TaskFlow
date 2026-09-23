@@ -30,3 +30,30 @@ export const authApi = {
     headers: { Authorization: `Bearer ${token}` }
   })
 };
+
+function withToken(token, options = {}) {
+  return {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`
+    }
+  };
+}
+
+export const taskApi = {
+  list: (token) => request("/tasks", withToken(token)),
+  create: (token, payload) => request("/tasks", withToken(token, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  })),
+  update: (token, id, payload) => request(`/tasks/${id}`, withToken(token, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  })),
+  remove: (token, id) => request(`/tasks/${id}`, withToken(token, { method: "DELETE" }))
+};
+
+export const categoryApi = {
+  list: (token) => request("/categories", withToken(token))
+};
