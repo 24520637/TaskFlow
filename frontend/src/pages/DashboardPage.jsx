@@ -4,7 +4,9 @@ import { LogoMark } from "../components/LogoMark";
 import { TaskFilters } from "../components/TaskFilters";
 import { TaskList } from "../components/TaskList";
 import { TaskModal } from "../components/TaskModal";
+import { CalendarView } from "../components/CalendarView";
 import { categoryApi, taskApi } from "../services/api";
+import { toLocalDateTimeValue } from "../services/calendar";
 import { useAuth } from "../context/AuthContext";
 
 const initialFilters = { search: "", status: "all", priority: "all", category: "all" };
@@ -19,6 +21,9 @@ export function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+  const [calendarDate, setCalendarDate] = useState(() => new Date());
+  const [calendarView, setCalendarView] = useState("week");
+  const [workspaceView, setWorkspaceView] = useState("calendar");
   const firstName = user?.name?.split(" ")[0] || "there";
 
   useEffect(() => {
@@ -40,7 +45,7 @@ export function DashboardPage() {
   async function saveTask(payload) {
     setIsSaving(true); setError("");
     try {
-      const result = modalTask ? await taskApi.update(token, modalTask.id, payload) : await taskApi.create(token, payload);
+      const result = modalTask?.id ? await taskApi.update(token, modalTask.id, payload) : await taskApi.create(token, payload);
       setTasks((current) => modalTask ? current.map((task) => task.id === result.task.id ? result.task : task) : [result.task, ...current]);
       setModalTask(undefined);
     } catch (saveError) { setError(saveError.message); } finally { setIsSaving(false); }
@@ -55,11 +60,16 @@ export function DashboardPage() {
     try { const result = await taskApi.update(token, task.id, { status: "completed" }); setTasks((current) => current.map((item) => item.id === result.task.id ? result.task : item)); } catch (completeError) { setError(completeError.message); }
   }
 
+  function createTaskAt(date) {
+    setError("");
+    setModalTask({ start_datetime: toLocalDateTimeValue(date) });
+  }
+
   return (
     <main className="app-shell">
       <header className="app-header"><LogoMark /><div className="app-header__right"><div className="user-chip"><span>{user?.name?.charAt(0).toUpperCase()}</span><strong>{user?.name}</strong></div><button className="text-button" onClick={handleSignOut}>Log out <span aria-hidden="true">↗</span></button></div></header>
       <section className="tasks-hero"><div><p className="eyebrow">Your workspace</p><h1>Good morning,<br /><em>{firstName}.</em></h1></div><button className="button button--primary add-task-button" onClick={() => { setError(""); setModalTask(null); }}><span className="add-task-button__plus">+</span> Add task</button></section>
-      <section className="task-workspace"><div className="workspace-heading"><div><p className="eyebrow">{tasks.length} total</p><h2>Your tasks</h2></div><span className="workspace-heading__note">Keep the next thing visible.</span></div><TaskFilters filters={filters} categories={categories} onChange={updateFilters} />{error && <div className="form-error task-page-error" role="alert">{error}</div>}{isLoading ? <div className="empty-state"><span className="loading-dot">· · ·</span><p>Loading your tasks...</p></div> : <TaskList tasks={visibleTasks} categories={categories} onEdit={(task) => setModalTask(task)} onDelete={deleteTask} onComplete={completeTask} />}</section>
+      <section className="task-workspace"><div className="workspace-heading"><div><p className="eyebrow">{tasks.length} total</p><h2>{workspaceView === "calendar" ? "Your schedule" : "Your tasks"}</h2></div><div className="workspace-heading__tools"><span className="workspace-heading__note">Keep the next thing visible.</span><div className="workspace-switcher" role="tablist"><button className={workspaceView === "calendar" ? "is-active" : ""} onClick={() => setWorkspaceView("calendar")}>Calendar</button><button className={workspaceView === "list" ? "is-active" : ""} onClick={() => setWorkspaceView("list")}>List</button></div></div></div>{workspaceView === "list" && <TaskFilters filters={filters} categories={categories} onChange={updateFilters} />}{error && <div className="form-error task-page-error" role="alert">{error}</div>}{isLoading ? <div className="empty-state"><span className="loading-dot">· · ·</span><p>Loading your tasks...</p></div> : workspaceView === "calendar" ? <CalendarView date={calendarDate} view={calendarView} tasks={visibleTasks} onViewChange={setCalendarView} onDateChange={setCalendarDate} onToday={() => setCalendarDate(new Date())} onSelectTask={(task) => setModalTask(task)} onCreateAt={createTaskAt} /> : <TaskList tasks={visibleTasks} categories={categories} onEdit={(task) => setModalTask(task)} onDelete={deleteTask} onComplete={completeTask} />}</section>
       {modalTask !== undefined && <TaskModal task={modalTask} categories={categories} onSubmit={saveTask} onCancel={() => setModalTask(undefined)} isSaving={isSaving} />}
     </main>
   );
