@@ -21,8 +21,7 @@ Fields:
 
 `password_hash` stores a bcrypt hash only. Plaintext passwords must never be stored.
 
-The initial users table is defined in `database/schema.sql`. Categories and tasks will
-be added when their APIs are implemented.
+The users, categories, and tasks tables are defined in `database/schema.sql`.
 
 ### categories
 
@@ -35,6 +34,8 @@ Fields:
 - name
 - color
 - created_at
+
+`user_id` ensures categories belong to their owner.
 
 ### tasks
 
@@ -54,6 +55,9 @@ Fields:
 - status
 - created_at
 - updated_at
+
+`user_id` ensures tasks belong to their owner. `category_id` is nullable and may only
+reference a category owned by the same user at the service layer.
 
 ## Relationships
 
