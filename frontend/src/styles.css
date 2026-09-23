@@ -133,6 +133,8 @@ a { color: inherit; }
 .workspace-heading__note { color: var(--muted); font-size: 12px; }
 .task-filters { display: flex; gap: 8px; margin-bottom: 19px; }
 .task-filters select, .task-field select { appearance: none; background: var(--white); background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 13px) 52%, calc(100% - 9px) 52%; background-repeat: no-repeat; background-size: 4px 4px, 4px 4px; border: 1px solid var(--line); color: var(--ink); font-size: 12px; padding: 11px 29px 11px 12px; }
+.clear-filters { background: transparent; border: 1px solid var(--line); color: var(--green); font-family: "DM Mono", monospace; font-size: 10px; padding: 0 12px; text-transform: uppercase; }
+.clear-filters:hover { background: var(--green); border-color: var(--green); color: var(--white); }
 .search-field { align-items: center; background: var(--white); border: 1px solid var(--line); display: flex; flex: 1; gap: 8px; padding: 0 12px; }
 .search-field span { color: var(--orange); font-size: 21px; line-height: 1; }
 .search-field input { background: transparent; border: 0; color: var(--ink); font-size: 12px; outline: 0; padding: 11px 0; width: 100%; }

@@ -66,7 +66,7 @@ export function DashboardSummary({ tasks, onSelectTask }) {
       <div className="summary-detail summary-detail--rate">
         <div className="summary-detail__heading"><div><span className="summary-card__label">Completion rate</span><strong>{completionRate}%</strong></div><span className="summary-ring" style={{ "--completion": `${completionRate}%` }} /></div>
         <div className="completion-track"><span style={{ width: `${completionRate}%` }} /></div>
-        <small>Based on all tasks in your workspace</small>
+        <small>Based on the tasks in this view</small>
       </div>
       <div className="summary-detail summary-detail--deadlines">
         <div className="summary-detail__heading"><div><span className="summary-card__label">Upcoming deadlines</span><strong>{upcomingDeadlines.length ? "Stay ahead" : "Clear horizon"}</strong></div><span className="summary-detail__count">{upcomingDeadlines.length}</span></div>
